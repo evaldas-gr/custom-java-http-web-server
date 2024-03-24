@@ -5,11 +5,11 @@ import org.webserver.http.data.*;
 import org.webserver.http.exceptions.HttpException;
 
 public abstract class HttpHandler {
-    private final HttpPath path;
+    private final HttpEndpointPath path;
     private final HttpMethod method;
 
     protected HttpHandler(String path, HttpMethod method) {
-        this.path = new HttpPath(path);
+        this.path = new HttpEndpointPath(path);
         this.method = method;
     }
 
@@ -22,7 +22,7 @@ public abstract class HttpHandler {
                 '}';
     }
 
-    public HttpPath getPath() {
+    public HttpEndpointPath getPath() {
         return path;
     }
 

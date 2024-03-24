@@ -1,4 +1,4 @@
-package org.webserver.controllers;
+package org.webserver.controllers.helpers;
 
 import com.fasterxml.jackson.databind.DatabindException;
 import org.webserver.http.exceptions.errors.client.StatusBadRequestException;

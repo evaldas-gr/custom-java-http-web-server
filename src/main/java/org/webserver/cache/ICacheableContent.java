@@ -1,4 +1,4 @@
-package org.webserver.media;
+package org.webserver.cache;
 
 public interface ICacheableContent {
 }

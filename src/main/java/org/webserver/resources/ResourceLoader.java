@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 public class ResourceLoader {
 
-    public static List<Resource> loadResources(String relativePath, String... extensions) throws IOException {
+    public static List<Resource> loadResources(String relativePath, String httpPath, String... extensions) throws IOException {
         String resourceAbsolutePath = AppConfig.getResourceAbsolutePath();
         if (relativePath != null && !relativePath.trim().isBlank()) {
             resourceAbsolutePath += File.separator + relativePath;
@@ -42,7 +42,7 @@ public class ResourceLoader {
                 buffer.get(contentChunk);
                 stream.write(contentChunk);
             }
-            resources.add(new Resource(file.getName(), stream.toByteArray()));
+            resources.add(new Resource(file.getName(), httpPath, stream.toByteArray()));
         }
 
         return resources;

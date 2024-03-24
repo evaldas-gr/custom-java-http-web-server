@@ -3,8 +3,10 @@ package org.webserver.http.data;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-public class HttpRequest  {
+import static org.webserver.http.global.HttpConfig.clock;
 
+public class HttpRequest  {
+    private final String requestId = Long.toString(clock.millis());
     private HttpMetadata metadata;
     private byte[] data;
 
@@ -16,7 +18,8 @@ public class HttpRequest  {
     @Override
     public String toString() {
         return "HttpRequest{" +
-                "metadata=" + metadata +
+                "requestId=" + requestId +
+                ", metadata=" + metadata +
                 ", data=" + Arrays.toString(data) +
                 '}';
     }
@@ -34,6 +37,7 @@ public class HttpRequest  {
         HttpMetadata metadata = HttpMetadata.parseMetadata(buffer);
         byte[] dataBody = new byte[buffer.remaining()];
         buffer.get(dataBody);
+
         return new HttpRequest(metadata, dataBody);
     }
 }

@@ -1,5 +1,7 @@
 package org.webserver.media;
 
+import org.webserver.media.data.MediaKey;
+
 import java.io.IOException;
 import java.util.List;
 

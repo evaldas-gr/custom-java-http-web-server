@@ -1,4 +1,4 @@
 package org.webserver.controllers;
 
-public interface IRequest {
+public abstract class IRequest {
 }

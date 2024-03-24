@@ -1,14 +1,17 @@
 package org.webserver.http.utils;
 
+import org.javatuples.Pair;
+
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 public class HttpBufferReader {
 
-    public static byte[] readUntilAnyOf(ByteBuffer buffer, int limit, byte[] terminateBytes) {
+    public static Pair<byte[], Boolean> readUntilAnyOf(ByteBuffer buffer, int limit, byte[] terminateBytes) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        boolean hasExceededLimit = false;
 
-        for (int i = 0; i < limit; i++) {
+        for (int i = 0; i < buffer.remaining(); i++) {
             byte temp = buffer.get();
 
             if (containsIn(temp, terminateBytes)) {
@@ -16,9 +19,14 @@ public class HttpBufferReader {
                 buffer.flip();
                 break;
             } else outputStream.write(temp);
+
+            if (i == limit) {
+                hasExceededLimit = true;
+                break;
+            }
         }
 
-        return outputStream.toByteArray();
+        return new Pair<>(outputStream.toByteArray(), hasExceededLimit);
     }
 
     public static boolean containsIn(byte b, byte[] lookupBytes) {

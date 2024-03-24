@@ -36,8 +36,8 @@ public class HttpInboundExecutor {
             HttpHandler handler = null;
             try {
                 HttpRequest httpRequest = HttpRequest.parseRequest(socketData);
-                HttpLogger.log("request from: ", clientChannel.getRemoteAddress());
-                HttpLogger.log("request data: ", httpRequest);
+                HttpLogger.log("request from:", clientChannel.getRemoteAddress());
+                HttpLogger.log("request data:", httpRequest);
                 metadata = httpRequest.getMetadata();
                 handler = this.httpHandlerResolver.getHandler(httpRequest);
 
@@ -52,8 +52,8 @@ public class HttpInboundExecutor {
                 return;
             }
 
-            HttpLogger.log("resolved handler: " + handler + '\'');
-            HttpLogger.log("server response: " + response);
+            HttpLogger.log("resolved handler:" + handler + '\'');
+            HttpLogger.log("server response:" + response);
             HttpLogger.logExecTime(startTime);
 
             submitResponse.accept(response);

@@ -1,8 +1,12 @@
-package org.webserver.media;
+package org.webserver.media.data;
+
+import org.webserver.cache.ICacheKey;
 
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.webserver.config.AppConfig.MEDIA_KEY_TTL;
 
 public class MediaKey implements ICacheKey<String> {
     private final String key;
@@ -16,7 +20,6 @@ public class MediaKey implements ICacheKey<String> {
     private final Integer ttl; // in ms
     private final Map<String, String> explicitHeaders;
     private Instant latestActionTime = Instant.now();
-    public static final int DEFAULT_TTL = 10000; // in ms
 
     @Override
     public String toString() {
@@ -33,7 +36,7 @@ public class MediaKey implements ICacheKey<String> {
         this.key = key;
         this.mediaResourcePath = mediaResourcePath;
         this.mediaRelativePath = key;
-        this.ttl = DEFAULT_TTL;
+        this.ttl = MEDIA_KEY_TTL;
         this.explicitHeaders = new HashMap<>();
     }
 
@@ -41,7 +44,7 @@ public class MediaKey implements ICacheKey<String> {
         this.key = key;
         this.mediaResourcePath = mediaResourcePath;
         this.mediaRelativePath = key;
-        this.ttl = DEFAULT_TTL;
+        this.ttl = MEDIA_KEY_TTL;
         this.explicitHeaders = explicitHeaders;
     }
 

@@ -1,4 +1,4 @@
 package org.webserver.controllers;
 
-public interface IResponse {
+public abstract class IResponse {
 }

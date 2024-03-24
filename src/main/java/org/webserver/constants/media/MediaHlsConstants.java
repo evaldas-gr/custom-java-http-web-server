@@ -1,8 +1,8 @@
-package org.webserver.constants;
+package org.webserver.constants.media;
 
 import java.util.List;
 
-public class MediaConstants {
+public class MediaHlsConstants {
     public static final String HLS_EXTENSION_M3U8 = ".m3u8";
     public static final String HLS_EXTENSION_M3U = ".m3u";
     public static final String HLS_EXTENSION_TS = ".ts";

@@ -1,8 +1,9 @@
 package org.webserver.services.media.hls;
 
-import org.webserver.constants.MediaConstants;
+import org.webserver.constants.media.MediaHlsConstants;
 import org.webserver.filesystem.Directory;
 import org.webserver.filesystem.DirectoryParser;
+import org.webserver.services.IService;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -10,12 +11,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class MediaHlsService {
+public class MediaHlsService implements IService {
 
     private final Directory hlsDirectory;
 
     public MediaHlsService(Path directoryPath) throws IOException {
-        this.hlsDirectory = DirectoryParser.parseDirectory(directoryPath).filterExtensions(MediaConstants.HLS_EXTENSIONS);
+        this.hlsDirectory = DirectoryParser.parseDirectory(directoryPath).filterExtensions(MediaHlsConstants.HLS_EXTENSIONS);
     }
 
     public Directory getDirectory() {
@@ -46,5 +47,10 @@ public class MediaHlsService {
 
     public List<Directory> listDirectories() {
         return this.hlsDirectory.getInnerDirectories();
+    }
+
+    @Override
+    public void startUp() {
+
     }
 }

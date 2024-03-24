@@ -3,14 +3,14 @@ package org.webserver;
 import org.webserver.config.AppConfig;
 import org.webserver.controllers.IController;
 import org.webserver.controllers.media.hls.MediaHlsController;
-import org.webserver.handlers.*;
+import org.webserver.controllers.resources.ResourceController;
+import org.webserver.handlers.NotFoundHandler;
 import org.webserver.http.HttpEventDispatcher;
 import org.webserver.http.HttpHandlerResolver;
 import org.webserver.http.HttpServerThread;
 import org.webserver.http.configs.HttpServerConfig;
 import org.webserver.http.handlers.HttpHandler;
 import org.webserver.media.HlsMediaLoader;
-import org.webserver.media.IMediaLoader;
 import org.webserver.resources.Resource;
 import org.webserver.resources.ResourceLoader;
 import org.webserver.services.IService;
@@ -22,6 +22,7 @@ import java.net.StandardProtocolFamily;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ApplicationStartUp {
 
@@ -32,10 +33,12 @@ public class ApplicationStartUp {
 
         // Services
         MediaCacheService mediaCacheService = new MediaCacheService();
+        MediaHlsService mediaHlsService = new MediaHlsService(Path.of(AppConfig.getMediaPath()));
         services.add(mediaCacheService);
+        services.add(mediaHlsService);
 
         HttpHandlerResolver httpHandlerResolver = new HttpHandlerResolver(new NotFoundHandler());
-        httpHandlerResolver.registerHandlers(getHttpHandlers(mediaCacheService));
+        httpHandlerResolver.registerHandlers(loadHttpHandlers(mediaCacheService, mediaHlsService).toList());
 
         // Custom Http Server
         HttpServerConfig.logsEnabled = AppConfig.isLoggingEnabled();
@@ -51,41 +54,42 @@ public class ApplicationStartUp {
         httpServerThread.start();
     }
 
-    private static List<HttpHandler> getHttpHandlers(MediaCacheService mediaCacheService) throws IOException {
-        List<HttpHandler> httpHandlers = new ArrayList<>();
-
-        // Load resources
-        List<Resource> htmlTemplates = ResourceLoader.loadResources("html", "html");
-        List<Resource> cssTemplates = ResourceLoader.loadResources("css", "css");
-        List<Resource> jsTemplates = ResourceLoader.loadResources("javascript", "js");
-
-        // Http handlers + registers
-        httpHandlers.add(new GetRouteDefault("/", ResourceLoader.resolveTemplate("index.html", htmlTemplates)));
-        httpHandlers.addAll(cssTemplates.stream().map(handler -> new CssHandler('/' + handler.getFileName(), handler)).toList());
-        httpHandlers.addAll(jsTemplates.stream().map(handler -> new JavascriptHandler('/' + handler.getFileName(), handler)).toList());
-        for (IMediaLoader mediaLoader : getMediaLoaders())
-            httpHandlers.add(new MediaResolverHandler(mediaLoader.getPrefixPath() + "/*/*", mediaLoader.generateMediaKeys(), mediaCacheService));
-        for (IController controller : getControllers())
-            httpHandlers.addAll(controller.getHandlers());
-
-        return httpHandlers;
+    private static Stream<HttpHandler> loadHttpHandlers(MediaCacheService mediaCacheService, MediaHlsService mediaHlsService) throws IOException {
+        return loadControllers(mediaCacheService, mediaHlsService)
+                .map(IController::getHandlers)
+                .reduce(Stream::concat)
+                .orElseGet(Stream::empty);
     }
 
-    private static List<IMediaLoader> getMediaLoaders() {
-        List<IMediaLoader> mediaLoaders = new ArrayList<>();
-
-        HlsMediaLoader hlsMediaLoader = new HlsMediaLoader(AppConfig.getMediaPath());
-
-        mediaLoaders.add(hlsMediaLoader);
-
-        return mediaLoaders;
+    private static Stream<IController> loadControllers(
+            MediaCacheService mediaCacheService,
+            MediaHlsService mediaHlsService
+    ) throws IOException {
+        return Stream.of(
+                new ResourceController(loadResources()),
+                new MediaHlsController(
+                        mediaHlsService,
+                        mediaCacheService,
+                        new HlsMediaLoader(AppConfig.getMediaPath())
+                )
+        );
     }
 
-    private static List<IController> getControllers() throws IOException {
-        List<IController> controllers = new ArrayList<>();
+    public static List<Resource> loadResources() throws IOException {
+        List<Resource> resources = new ArrayList<>();
 
-        controllers.add(new MediaHlsController(new MediaHlsService(Path.of(AppConfig.getMediaPath()))));
+        List<Resource> htmlResources = ResourceLoader.loadResources("html", "/", "html").stream().peek(resource -> {
+            if (resource.getFileName().equals("index.html")) {
+                resource.setDefaultPath(true);
+            }
+        }).toList();
+        List<Resource> cssResources = ResourceLoader.loadResources("css", "/css", "css");
+        List<Resource> jsResources = ResourceLoader.loadResources("javascript", "/javascript", "js");
 
-        return controllers;
+        resources.addAll(htmlResources);
+        resources.addAll(cssResources);
+        resources.addAll(jsResources);
+
+        return resources;
     }
 }

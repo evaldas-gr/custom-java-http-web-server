@@ -2,6 +2,7 @@ package org.webserver.media;
 
 import org.webserver.config.AppConfig;
 import org.webserver.filesystem.DirectoryReader;
+import org.webserver.media.data.MediaKey;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -9,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.webserver.constants.MediaConstants.*;
-import static org.webserver.http.data.headers.HttpContentTypes.APPLICATION_VND_APPLE_MPEGURL;
-import static org.webserver.http.data.headers.HttpHeaders.CONTENT_TYPE;
+import static org.webserver.constants.media.MediaHlsConstants.*;
+import static org.webserver.http.data.types.HttpContentType.APPLICATION_VND_APPLE_MPEGURL;
+import static org.webserver.http.data.types.HttpHeader.CONTENT_TYPE;
 
 public class HlsMediaLoader implements IMediaLoader {
 

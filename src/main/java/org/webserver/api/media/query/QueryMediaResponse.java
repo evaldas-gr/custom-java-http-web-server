@@ -1,8 +1,9 @@
-package org.webserver.api.media;
+package org.webserver.api.media.query;
 
 import org.webserver.api.media.query.QueryDirectory;
+import org.webserver.controllers.IResponse;
 
-public class QueryMediaResponse {
+public class QueryMediaResponse extends IResponse {
     private QueryDirectory directory;
 
     public QueryMediaResponse() {

@@ -17,9 +17,9 @@ import java.util.*;
 
 public class HttpServerThread extends Thread {
     private volatile boolean running = false;
-    private ServerSocketChannel serverSocketChannel;
-    private Selector selector;
-    private HttpEventDispatcher eventDispatcher;
+    private final ServerSocketChannel serverSocketChannel;
+    private final Selector selector;
+    private final HttpEventDispatcher eventDispatcher;
     private final List<ChangeRequest> changeRequests = new LinkedList<>();
     private final Map<SocketChannel, List<ByteBuffer>> pendingData = new HashMap<>();
     private final Integer readBufferSize;

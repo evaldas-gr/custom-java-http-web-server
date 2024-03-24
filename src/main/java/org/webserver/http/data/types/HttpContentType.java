@@ -1,6 +1,6 @@
-package org.webserver.http.data.headers;
+package org.webserver.http.data.types;
 
-public enum HttpContentTypes {
+public enum HttpContentType {
     APPLICATION_JSON("application/json"),
     APPLICATION_TEXT_HTML("text/html"),
     APPLICATION_TEXT_CSS("text/css"),
@@ -9,7 +9,7 @@ public enum HttpContentTypes {
 
     private final String value;
 
-    HttpContentTypes(String value) {
+    HttpContentType(String value) {
         this.value = value;
     }
 

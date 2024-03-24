@@ -1,5 +1,7 @@
 package org.webserver.http.data;
 
+import org.webserver.http.data.types.HttpHeader;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -12,7 +14,8 @@ public class HttpResponse {
     private HttpStatus status;
     private Map<String, String> headers = new HashMap<>();
     private byte[] data = null;
-    private boolean escapeContent = true;
+
+    private static final Map<String, String> SERVER_HEADERS = Map.of(HttpHeader.SERVER.getValue(), "EG");
 
     public HttpResponse(String protocol, HttpStatus status) {
         this.protocol = protocol;
@@ -23,6 +26,13 @@ public class HttpResponse {
         this.protocol = protocol;
         this.status = status;
         this.headers = headers;
+    }
+
+    public HttpResponse(String protocol, HttpStatus status, Map<String, String> headers, byte[] data) {
+        this.protocol = protocol;
+        this.status = status;
+        this.headers = headers;
+        this.data = data;
     }
 
     @Override
@@ -50,6 +60,7 @@ public class HttpResponse {
         boolean hasData = data != null;
         int contentLength = hasData ? data.length : 0;
         ByteBuffer buffer;
+        int bufferSize;
 
         httpSegmentSb.append(this.protocol)
                 .append(" ")
@@ -58,17 +69,18 @@ public class HttpResponse {
                 .append(this.status.getHttpCodeText())
                 .append("\r\n");
         this.headers.forEach((key, value) -> httpSegmentSb.append(key).append(": ").append(value).append("\r\n"));
+        SERVER_HEADERS.forEach((key, value) -> httpSegmentSb.append(key).append(": ").append(value).append("\r\n"));
 
         byte[] httpSegmentBytes = httpSegmentSb.append("\r\n").toString().getBytes();
 
-        buffer = ByteBuffer.allocate(httpSegmentBytes.length + contentLength + 2);
+        bufferSize = httpSegmentBytes.length + contentLength;
+        buffer = ByteBuffer.allocate(bufferSize);
         buffer.put(httpSegmentBytes);
+
         if (hasData) {
             buffer.put(data);
-            if (escapeContent) {
-                buffer.put("\r\n".getBytes());
-            }
         }
+
         buffer.flip();
         return buffer.array();
     }
@@ -99,9 +111,5 @@ public class HttpResponse {
         if (data != null) {
             this.data = data.getBytes(charset);
         }
-    }
-
-    public void setEscapeContent(boolean value) {
-        this.escapeContent = value;
     }
 }

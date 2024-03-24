@@ -1,4 +1,6 @@
-package org.webserver.media;
+package org.webserver.media.data;
+
+import org.webserver.cache.ICacheableContent;
 
 public class MediaFile implements ICacheableContent {
     public final String fileName;

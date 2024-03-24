@@ -1,4 +1,4 @@
-package org.webserver.api.media;
+package org.webserver.api.media.types;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

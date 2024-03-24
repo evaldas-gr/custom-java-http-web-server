@@ -1,9 +1,9 @@
 package org.webserver.services;
 
 import org.webserver.logs.Logger;
-import org.webserver.media.IInMemoryCacheInterface;
-import org.webserver.media.MediaFile;
-import org.webserver.media.MediaKey;
+import org.webserver.cache.IInMemoryCache;
+import org.webserver.media.data.MediaFile;
+import org.webserver.media.data.MediaKey;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,9 +12,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class MediaCacheService implements IInMemoryCacheInterface<MediaKey, MediaFile>, IService {
+public class MediaCacheService implements IInMemoryCache<MediaKey, MediaFile>, IService {
     private final ConcurrentHashMap<MediaKey, MediaFile> cache = new ConcurrentHashMap<>();
-    private ScheduledExecutorService threadScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService threadScheduledExecutor = Executors.newSingleThreadScheduledExecutor();
 
     public MediaFile load(MediaKey key) {
         MediaFile loadedFile = loadFromCache(key);

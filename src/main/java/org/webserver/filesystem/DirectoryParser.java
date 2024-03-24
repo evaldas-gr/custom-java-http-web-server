@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class DirectoryParser {
+    public static final List<String> systemDirectories = Arrays.asList("META-INF", "target", ".git");
+
     public static Directory parseDirectory(Path rootDirectory) throws IOException {
         Directory directory = new Directory(rootDirectory.getFileName().toString(), rootDirectory.toString());
 
@@ -35,8 +37,6 @@ public class DirectoryParser {
     }
 
     private static boolean isSystemDirectory(Path directory) {
-        List<String> systemDirectories = Arrays.asList("META-INF", "target", ".git");
-
         return systemDirectories.contains(directory.getFileName().toString());
     }
 }

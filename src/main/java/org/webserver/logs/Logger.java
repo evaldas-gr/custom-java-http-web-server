@@ -36,30 +36,24 @@ public class Logger {
 
     public static void error(String message) {
         executorService.execute(() -> {
-            if (AppConfig.isLoggingEnabled()) {
-                System.out.format("%s%s %s%n", serverId, error, message);
-            }
+            System.out.format("%s%s %s%n", serverId, error, message);
         });
     }
 
     public static void error(String message, Object callerObj, Object... params) {
         executorService.execute(() -> {
-            if (AppConfig.isLoggingEnabled()) {
-                String objStr = (callerObj != null) ? ConsoleColors.ANSI_GREEN + callerObj.getClass().getSimpleName() + ConsoleColors.ANSI_RESET : "";
-                String paramsStr = Arrays.stream(params).map(Object::toString).collect(Collectors.joining(","));
-                System.out.format("%s%s[%s] %s, params=%s%n", serverId, error, objStr, message, paramsStr);
-            }
+            String objStr = (callerObj != null) ? ConsoleColors.ANSI_GREEN + callerObj.getClass().getSimpleName() + ConsoleColors.ANSI_RESET : "";
+            String paramsStr = Arrays.stream(params).map(Object::toString).collect(Collectors.joining(","));
+            System.out.format("%s%s[%s] %s, params=%s%n", serverId, error, objStr, message, paramsStr);
         });
     }
 
     public static void error(String message, Object callerObj, Exception e, Object... params) {
         executorService.execute(() -> {
-            if (AppConfig.isLoggingEnabled()) {
-                String objStr = (callerObj != null) ? ConsoleColors.ANSI_GREEN + callerObj.getClass().getSimpleName() + ConsoleColors.ANSI_RESET : "";
-                String paramsStr = Arrays.stream(params).map(Object::toString).collect(Collectors.joining(","));
-                String exceptionMsg = (e != null) ? e.getMessage() : "";
-                System.out.format("%s%s[%s] %s, exception=%s, params=%s%n", serverId, error, objStr, message, exceptionMsg, paramsStr);
-            }
+            String objStr = (callerObj != null) ? ConsoleColors.ANSI_GREEN + callerObj.getClass().getSimpleName() + ConsoleColors.ANSI_RESET : "";
+            String paramsStr = Arrays.stream(params).map(Object::toString).collect(Collectors.joining(","));
+            String exceptionMsg = (e != null) ? e.getMessage() : "";
+            System.out.format("%s%s[%s] %s, exception=%s, params=%s%n", serverId, error, objStr, message, exceptionMsg, paramsStr);
         });
     }
 }

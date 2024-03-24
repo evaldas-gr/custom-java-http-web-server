@@ -2,6 +2,7 @@ package org.webserver.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -15,10 +16,11 @@ public class AppConfig {
     private static String HTML_RESOURCE_ABSOLUTE_PATH = null;
     private static boolean LOGGING_STATE = false;
     private static String MEDIA_PATH;
+    public static int MEDIA_KEY_TTL; // in ms
 
     public static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static void initializeEnv() {
+    public static void initializeEnv() throws IOException {
         try (InputStream input = ClassLoader.getSystemResourceAsStream("config.properties")) {
             ClassLoader classLoader = AppConfig.class.getClassLoader();
             properties.load(input);
@@ -26,8 +28,10 @@ public class AppConfig {
             LOGGING_STATE = Boolean.parseBoolean(properties.getProperty("log.enable"));
             MEDIA_PATH = properties.getProperty("media.path");
             HTML_RESOURCE_ABSOLUTE_PATH = Objects.requireNonNull(classLoader.getResource(properties.getProperty("http.resources"))).getPath();
+            MEDIA_KEY_TTL = Integer.parseInt(properties.getProperty("media.key.ttl"));
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
     }
 

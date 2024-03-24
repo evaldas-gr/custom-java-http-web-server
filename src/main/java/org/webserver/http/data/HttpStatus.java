@@ -18,8 +18,8 @@ public enum HttpStatus {
     UNSUPPORTED_MEDIA_TYPE("415", "Unsupported Media Type"),
     INTERNAL_ERROR("500", "Internal Server Error");
 
-    private String code;
-    private String httpCodeText;
+    private final String code;
+    private final String httpCodeText;
 
     HttpStatus(String code, String httpCodeText) {
         this.code = code;
